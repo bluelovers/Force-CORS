@@ -28,7 +28,7 @@ function Forcecors() {
 	};
 };
 
-Forcecors.getHeaders = function() {
+Forcecors.prototype.getHeaders = function() {
 	/*
 	var prefs = Components.classes['@mozilla.org/preferences-service;1']
 		.getService(Components.interfaces.nsIPrefBranch);
@@ -41,6 +41,8 @@ Forcecors.getHeaders = function() {
 	catch(e)
 	{
 		var headers = this.prefs.getCharPref('forcecors.headers');
+
+		this.prefs.setCharPref('extensions.forcecors.headers', headers);
 	}
 
 	if(headers != null) {
@@ -60,7 +62,7 @@ Forcecors.prototype.updateLabel = function() {
 	if(this.enabled) {
 		btn.label = 'CORS';
 		btn.tooltipText = 'CORS is currently forced';
-		btn.className += 'enabled';
+		btn.className = (btn.className || '') + 'enabled';
 	} else {
 		btn.label = 'cors';
 		btn.tooltipText = 'click to force CORS';
@@ -72,16 +74,24 @@ Forcecors.prototype.toggle = function() {
 	var os = Components.classes["@mozilla.org/observer-service;1"]
 		.getService(Components.interfaces.nsIObserverService);
 
-	if(this.enabled) {
-		os.removeObserver(this.observer, "http-on-examine-response");
-	} else {
-		os.addObserver(this.observer, "http-on-examine-response", false);
+	try
+	{
+		if(this.enabled) {
+			os.removeObserver(this.observer, "http-on-examine-response");
+		} else {
+			os.addObserver(this.observer, "http-on-examine-response", false);
+		}
 	}
+	catch(e)
+	{}
+
 	this.enabled = !this.enabled;
 	this.updateLabel();
 
 	this.prefs.setBoolPref('extensions.forcecors.enabled', this.enabled);
 };
 
-var forcecors = new Forcecors();
-forcecors.updateLabel();
+window.addEventListener("load", function(){
+	Forcecors = new Forcecors();
+	Forcecors.updateLabel();
+}, false);
