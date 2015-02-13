@@ -4,7 +4,15 @@ function Forcecors() {
 	this.prefs = Components.classes['@mozilla.org/preferences-service;1']
 		.getService(Components.interfaces.nsIPrefBranch);
 
-	this.enabled = !!this.prefs.getBoolPref('forcecors.enabled');
+	try
+	{
+		this.enabled = this.prefs.getBoolPref('extensions.forcecors.enabled');
+	}
+	catch(e)
+	{
+		this.prefs.setBoolPref('extensions.forcecors.enabled', false);
+		this.enabled = false;
+	}
 
 	this.observer = {
 		observe: function(subject, topic, data) {
@@ -25,13 +33,22 @@ Forcecors.getHeaders = function() {
 	var prefs = Components.classes['@mozilla.org/preferences-service;1']
 		.getService(Components.interfaces.nsIPrefBranch);
 	*/
-	var headers = this.prefs.getCharPref('forcecors.headers');
+
+	try
+	{
+		var headers = this.prefs.getCharPref('extensions.forcecors.headers');
+	}
+	catch(e)
+	{
+		var headers = this.prefs.getCharPref('forcecors.headers');
+	}
+
 	if(headers != null) {
 		if(headers.indexOf('|') === -1) {
 			// migrate old config
 			headers = headers.replace(/ /, '|');
 			headers = headers.replace(/:/, ' ');
-			this.prefs.setCharPref('forcecors.headers', headers);
+			this.prefs.setCharPref('extensions.forcecors.headers', headers);
 		}
 		return headers.split('|');
 	}
@@ -63,7 +80,7 @@ Forcecors.prototype.toggle = function() {
 	this.enabled = !this.enabled;
 	this.updateLabel();
 
-	this.prefs.setBoolPref('forcecors.enabled', this.enabled);
+	this.prefs.setBoolPref('extensions.forcecors.enabled', this.enabled);
 };
 
 var forcecors = new Forcecors();
