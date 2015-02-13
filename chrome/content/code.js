@@ -1,5 +1,11 @@
 function Forcecors() {
-	this.enabled = false;
+	//this.enabled = false;
+
+	this.prefs = Components.classes['@mozilla.org/preferences-service;1']
+		.getService(Components.interfaces.nsIPrefBranch);
+
+	this.enabled = !!this.prefs.getCharPref('forcecors.enabled');
+
 	this.observer = {
 		observe: function(subject, topic, data) {
 			if(topic == 'http-on-examine-response') {
@@ -15,15 +21,17 @@ function Forcecors() {
 };
 
 Forcecors.getHeaders = function() {
+	/*
 	var prefs = Components.classes['@mozilla.org/preferences-service;1']
 		.getService(Components.interfaces.nsIPrefBranch);
-	var headers = prefs.getCharPref('forcecors.headers');
+	*/
+	var headers = this.prefs.getCharPref('forcecors.headers');
 	if(headers != null) {
 		if(headers.indexOf('|') === -1) {
 			// migrate old config
 			headers = headers.replace(/ /, '|');
 			headers = headers.replace(/:/, ' ');
-			prefs.setCharPref('forcecors.headers', headers);
+			this.prefs.setCharPref('forcecors.headers', headers);
 		}
 		return headers.split('|');
 	}
@@ -54,6 +62,8 @@ Forcecors.prototype.toggle = function() {
 	}
 	this.enabled = !this.enabled;
 	this.updateLabel();
+
+	prefs.setCharPref('forcecors.enabled', this.enabled);
 };
 
 var forcecors = new Forcecors();
