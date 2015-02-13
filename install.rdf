@@ -19,6 +19,6 @@
 		<em:creator>Josef Pfleger</em:creator>
 		<em:homepageURL>http://www-jo.se/f.pfleger/forcecors</em:homepageURL>
 
-		<em:bootstrap>true</em:bootstrap>
+		<em:bootstrap>false</em:bootstrap>
 	</Description>
 </RDF>
