@@ -70,9 +70,11 @@ Forcecors.prototype.updateLabel = function() {
 	}
 };
 
-Forcecors.prototype.toggle = function() {
+Forcecors.prototype.toggle = function(bool) {
 	var os = Components.classes["@mozilla.org/observer-service;1"]
 		.getService(Components.interfaces.nsIObserverService);
+
+	this.enabled = typeof bool === 'boolean' ? bool : this.enabled;
 
 	try
 	{
