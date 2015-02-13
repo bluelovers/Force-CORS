@@ -63,7 +63,7 @@ Forcecors.prototype.toggle = function() {
 	this.enabled = !this.enabled;
 	this.updateLabel();
 
-	prefs.setCharPref('forcecors.enabled', this.enabled);
+	this.prefs.setCharPref('forcecors.enabled', this.enabled);
 };
 
 var forcecors = new Forcecors();
