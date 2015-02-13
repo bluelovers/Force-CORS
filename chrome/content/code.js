@@ -4,7 +4,7 @@ function Forcecors() {
 	this.prefs = Components.classes['@mozilla.org/preferences-service;1']
 		.getService(Components.interfaces.nsIPrefBranch);
 
-	this.enabled = !!this.prefs.getCharPref('forcecors.enabled');
+	this.enabled = !!this.prefs.getBoolPref('forcecors.enabled');
 
 	this.observer = {
 		observe: function(subject, topic, data) {
@@ -63,7 +63,7 @@ Forcecors.prototype.toggle = function() {
 	this.enabled = !this.enabled;
 	this.updateLabel();
 
-	this.prefs.setCharPref('forcecors.enabled', this.enabled);
+	this.prefs.setBoolPref('forcecors.enabled', this.enabled);
 };
 
 var forcecors = new Forcecors();
