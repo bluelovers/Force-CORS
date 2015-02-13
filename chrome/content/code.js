@@ -71,13 +71,13 @@ Forcecors.prototype.updateLabel = function()
 	{
 		btn.label = 'CORS';
 		btn.tooltipText = 'CORS is currently forced';
-		btn.className = (btn.className || '') + 'enabled';
+		btn.className = (btn.className || '') + ' enabled';
 	}
 	else
 	{
 		btn.label = 'cors';
 		btn.tooltipText = 'click to force CORS';
-		btn.className = btn.className.replace(/\benabled\b/, '');
+		btn.className = btn.className.replace(/\benabled\b/ig, '');
 	}
 };
 
@@ -86,7 +86,7 @@ Forcecors.prototype.toggle = function(bool)
 	var os = Components.classes["@mozilla.org/observer-service;1"]
 		.getService(Components.interfaces.nsIObserverService);
 
-	this.enabled = typeof bool === 'boolean' ? bool : this.enabled;
+	bool = (typeof bool === 'boolean' ? bool : !this.enabled);
 
 	try
 	{
@@ -94,19 +94,35 @@ Forcecors.prototype.toggle = function(bool)
 		{
 			os.removeObserver(this.observer, "http-on-examine-response");
 		}
-		else
+	}
+	catch (e)
+	{
+		console.error(e);
+	}
+
+	try
+	{
+		if (bool)
 		{
 			os.addObserver(this.observer, "http-on-examine-response", false);
 		}
 	}
 	catch (e)
-	{}
+	{
+		console.error(e);
+	}
 
-	this.enabled = !this.enabled;
+	//this.enabled = !this.enabled;
+	this.enabled = bool;
 	this.updateLabel();
 
 	this.prefs.setBoolPref('extensions.forcecors.enabled', this.enabled);
 };
 
 Forcecors = new Forcecors();
-Forcecors.updateLabel();
+
+window.addEventListener('DOMContentLoaded', function()
+{
+	//Forcecors.updateLabel();
+	Forcecors.toggle(Forcecors.enabled);
+}, false);
