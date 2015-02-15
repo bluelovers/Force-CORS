@@ -97,7 +97,7 @@ Forcecors.prototype.toggle = function(bool)
 	}
 	catch (e)
 	{
-		console.error(e);
+		//console.error(e);
 	}
 
 	try
